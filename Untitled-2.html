@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Button with Permission</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .centered {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            justify-content: center;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            position: static;
+        }
+        .randomBtn {
+            display: none;
+            position: absolute;
+        }
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0);
+            pointer-events: none;
+            transition: background 0.5s;
+            z-index: 100;
+        }
+        #scary-face {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 101;
+            width: 200px;
+            height: 200px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="overlay"></div>
+    <img id="scary-face" src="scary-thunder-and-lightning-66913.mp3" alt="Scary Face" />
+    <!-- Add a scary sound effect (replace src with your own if you want) -->
+    <audio id="scary-audio" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12b2fae5e6.mp3"></audio>
+    <!-- Add multiple scary sound effects -->
+    <audio id="scary-audio-1" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12b2fae5e6.mp3"></audio>
+    <audio id="scary-audio-2" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b273d.mp3"></audio>
+    <audio id="scary-audio-3" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12b2fae5e6.mp3"></audio>
+    <audio id="scary-audio-4" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b273d.mp3"></audio>
+    <div id="container">
+        <div class="centered">
+            <div>ARE YOU SURE WANT PRESS THE BUTTON?</div>
+            <button id="btn0" onclick="showNextButton(1)">Yes</button>
+            <button id="btn1" class="randomBtn" onclick="showNextButton(2)">Are you REALLY sure?</button>
+            <button id="btn2" class="randomBtn" onclick="showNextButton(3)">Last Chance!</button>
+            <button id="btn3" class="randomBtn" onclick="showNextButton(4)">Keep Going!</button>
+            <button id="btn4" class="randomBtn" onclick="showNextButton(5)">Still Sure?</button>
+            <button id="btn5" class="randomBtn" onclick="showNextButton(6)">Don't Stop!</button>
+            <button id="btn6" class="randomBtn" onclick="showNextButton(7)">Almost There!</button>
+            <button id="btn7" class="randomBtn" onclick="showNextButton(8)">Really?</button>
+            <button id="btn8" class="randomBtn" onclick="showNextButton(9)">Why?</button>
+            <button id="btn9" class="randomBtn" onclick="showNextButton(10)">One More!</button>
+            <button id="btn10" class="randomBtn" onclick="showNextButton(11)">Final Button?</button>
+            <button id="btn11" class="randomBtn" onclick="showNextButton(12)">No Turning Back!</button>
+            <button id="btn12" class="randomBtn" onclick="showNextButton(13)">Seriously?</button>
+            <button id="btn13" class="randomBtn" onclick="showNextButton(14)">Almost Done!</button>
+            <button id="btn14" class="randomBtn" onclick="askPermission()">YOU ASKED FOR IT?</button>
+        </div>
+    </div>
+    <script>
+        let darkness = 0;
+        function showNextButton(next) {
+            // Hide all buttons
+            for (let i = 0; i <= 14; i++) {
+                const btn = document.getElementById('btn' + i);
+                if (btn) btn.style.display = 'none';
+            }
+            // Show next button
+            const nextBtn = document.getElementById('btn' + next);
+            if (nextBtn) {
+                nextBtn.style.display = 'block';
+                // Randomize position except for the first button
+                if (next !== 0) randomizeButtonPosition(nextBtn);
+            }
+            // Make screen darker and sometimes show scary face
+            darkness += 0.07;
+            if (darkness > 0.85) darkness = 0.85;
+            document.getElementById('overlay').style.background = `rgba(0,0,0,${darkness})`;
+
+            // Show scary face and play random scary sound
+            if (Math.random() < 0.25) {
+                showScaryFace();
+                playRandomScarySound();
+            }
+        }
+
+        // Show the first button centered on load
+        window.onload = function() {
+            document.getElementById('btn0').style.display = 'block';
+
+            // Unlock all audio on first user interaction (anywhere)
+            const unlock = () => {
+                ['scary-audio-1','scary-audio-2','scary-audio-3','scary-audio-4'].forEach(id => {
+                    const audio = document.getElementById(id);
+                    if (audio) {
+                        audio.volume = 1;
+                        audio.play().then(() => {
+                            audio.pause();
+                            audio.currentTime = 0;
+                        }).catch(() => {});
+                    }
+                });
+                window.removeEventListener('pointerdown', unlock);
+            };
+            window.addEventListener('pointerdown', unlock);
+        };
+
+        function askPermission() {
+            if (confirm("WTF ARE YOU SURE??? IT'S WILL BE SACRYYYY")) {
+                window.location.href = 'https://www.youtube.com/shorts/eyEAp2rK36c';
+            }
+        }
+
+        function randomizeButtonPosition(btn) {
+            // Get viewport size
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+
+            // Button size
+            const btnWidth = btn.offsetWidth || 120;
+            const btnHeight = btn.offsetHeight || 40;
+
+            // Random position within viewport
+            const left = Math.random() * (vw - btnWidth);
+            const top = Math.random() * (vh - btnHeight);
+
+            btn.style.left = left + 'px';
+            btn.style.top = top + 'px';
+        }
+
+        function showScaryFace() {
+            const face = document.getElementById('scary-face');
+            face.style.display = 'block';
+            setTimeout(() => {
+                face.style.display = 'none';
+            }, 700);
+        }
+
+        function playScarySound() {
+            const audio = document.getElementById('scary-audio');
+            audio.currentTime = 0;
+            audio.play();
+        }
+
+        function playRandomScarySound() {
+            // Pick a random audio element
+            const sounds = [
+                document.getElementById('scary-audio-1'),
+                document.getElementById('scary-audio-2'),
+                document.getElementById('scary-audio-3'),
+                document.getElementById('scary-audio-4')
+            ];
+            const idx = Math.floor(Math.random() * sounds.length);
+            const audio = sounds[idx];
+            audio.currentTime = 0;
+            audio.play();
+        }
+    </script>
+</body>
+</html>
